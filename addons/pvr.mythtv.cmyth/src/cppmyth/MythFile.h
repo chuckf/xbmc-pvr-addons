@@ -20,12 +20,20 @@
  */
 
 #include "MythConnection.h"
+#include "../client.h"
 
 #include <boost/shared_ptr.hpp>
 
 extern "C" {
 #include <cmyth/cmyth.h>
 };
+
+typedef struct
+{
+  unsigned long long start;
+  unsigned long long end;
+  bool isIgnored;
+} FILE_CUT_ENTRY;
 
 class MythFile
 {
@@ -42,7 +50,17 @@ public:
   long long Seek(long long offset, int whence);
   unsigned long long Position();
 
+  void ResetCutList();
+  bool AddCutEntry(unsigned long long start, unsigned long long end);
+
 private:
   boost::shared_ptr<MythPointer<cmyth_file_t> > m_file_t;
   MythConnection m_conn;
+
+  FILE_CUT_ENTRY m_CutList[FILE_CUT_LIST_SIZE];
+  int m_CutListSize;
+  FILE_CUT_ENTRY *m_Cut; // The handled cut for current position
+  void PinCutAround(FILE_CUT_ENTRY *cutEntry, bool preserveIgnored);
+  void FindPinCutAround(bool preserveIgnored);
+  long long SeekOverCut(long long offset, int whence);
 };

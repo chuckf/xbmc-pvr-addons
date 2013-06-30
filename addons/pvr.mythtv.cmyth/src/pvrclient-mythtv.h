@@ -153,4 +153,6 @@ private:
   void PVRtoMythRecordingRule(const PVR_TIMER timer, MythRecordingRule &rule);
 
   CStdString GetArtWork(FileOps::FileType storageGroup, const CStdString &shwTitle);
+
+  void LoadCutList(MythFile &file, MythProgramInfo &recording);
 };

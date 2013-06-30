@@ -1602,6 +1602,9 @@ bool PVRClientMythTV::OpenRecordedStream(const PVR_RECORDING &recording)
       // Disable playback mode: Allow all
       m_pEventHandler->DisablePlayback();
     }
+    // If internal method is selected to process EDL then initialize the cut list.
+    else if (g_iEdlMethodType == 1)
+      LoadCutList(m_file,it->second);
 
     if (g_bExtraDebug)
       XBMC->Log(LOG_DEBUG, "%s - Done - %s", __FUNCTION__, (m_file.IsNull() ? "false" : "true"));
@@ -1610,6 +1613,56 @@ bool PVRClientMythTV::OpenRecordedStream(const PVR_RECORDING &recording)
   }
   XBMC->Log(LOG_DEBUG, "%s - Recording %s does not exist", __FUNCTION__, recording.strRecordingId);
   return false;
+}
+
+void PVRClientMythTV::LoadCutList(MythFile &file, MythProgramInfo &recording)
+{
+  unsigned long long startOffset = 0;
+  unsigned long long endOffset = 0;
+  long long psoffset;
+  long long nsoffset;
+  int mask = 0;
+  Edl::const_iterator edlIt;
+  file.ResetCutList();
+
+  Edl commbreakList = m_con.GetCommbreakList(recording);
+  XBMC->Log(LOG_DEBUG, "%s - Found %d commercial breaks for: %s", __FUNCTION__, commbreakList.size(), recording.Title().c_str());
+
+  Edl cutList = m_con.GetCutList(recording);
+  XBMC->Log(LOG_DEBUG, "%s - Found %d cut list entries for: %s", __FUNCTION__, cutList.size(), recording.Title().c_str());
+
+  commbreakList.insert(commbreakList.end(), cutList.begin(), cutList.end());
+  for (edlIt = commbreakList.begin(); edlIt != commbreakList.end(); ++edlIt)
+  {
+    if ((mask = m_db.GetRecordingSeekOffset(recording, edlIt->start_mark, &psoffset, &nsoffset)) > 0)
+    {
+      switch (mask)
+      {
+        case 2:
+          startOffset = (unsigned long long)nsoffset; // Next frame
+          break;
+        default:
+          startOffset = (unsigned long long)psoffset; // Choose to start on previous frame
+      }
+      if ((mask = m_db.GetRecordingSeekOffset(recording, edlIt->end_mark, &psoffset, &nsoffset)) > 0)
+      {
+        switch (mask)
+        {
+          case 1:
+            endOffset = (unsigned long long)psoffset; // Previous frame
+            break;
+          default:
+            endOffset = (unsigned long long)nsoffset; // Choose to end on next frame
+        }
+        if (!file.AddCutEntry(startOffset, endOffset))
+        {
+          XBMC->Log(LOG_ERROR, "%s - Maximum number of EDL entries reached for: %s", __FUNCTION__, recording.Title().c_str());
+          break;
+        }
+        XBMC->Log(LOG_DEBUG, "%s - Add cut entry to file: %llu - %llu", __FUNCTION__, startOffset, endOffset);
+      }
+    }
+  }
 }
 
 void PVRClientMythTV::CloseRecordedStream()

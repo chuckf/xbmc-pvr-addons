@@ -21,15 +21,19 @@
 #include "MythFile.h"
 #include "MythPointer.h"
 
+using namespace ADDON;
+
 MythFile::MythFile()
   : m_file_t(new MythPointer<cmyth_file_t>())
   , m_conn(MythConnection())
+  , m_CutListSize(0)
 {
 }
 
 MythFile::MythFile(cmyth_file_t myth_file, MythConnection conn)
   : m_file_t(new MythPointer<cmyth_file_t>())
   , m_conn(conn)
+  , m_CutListSize(0)
 {
   *m_file_t = myth_file;
 }
@@ -58,6 +62,21 @@ void MythFile::UpdateLength(unsigned long long length)
 int MythFile::Read(void *buffer, unsigned int length)
 {
   int bytesRead;
+
+  if (m_CutListSize > 0)
+  {
+    while (m_Cut != NULL && this->Position() >= m_Cut->start)
+    {
+      XBMC->Log(LOG_DEBUG,"%s - Seek >>> cut: %llu", __FUNCTION__, m_Cut->end);
+      if (this->SeekOverCut(m_Cut->end, WHENCE_SET) < 0)
+        break;
+    }
+    if (m_Cut != NULL && (unsigned long long)(this->Position() + length) > m_Cut->start)
+    {
+      length = (unsigned int)(m_Cut->start - this->Position());
+      XBMC->Log(LOG_DEBUG,"%s - Read (%u) --> cut: %llu", __FUNCTION__, length, m_Cut->start);
+    }
+  }
   bytesRead = cmyth_file_read(*m_file_t, static_cast< char * >(buffer), length);
   return bytesRead;
 }
@@ -65,7 +84,34 @@ int MythFile::Read(void *buffer, unsigned int length)
 long long MythFile::Seek(long long offset, int whence)
 {
   long long retval = 0;
-  retval = cmyth_file_seek(*m_file_t, offset, whence);
+  if (m_CutListSize > 0)
+  {
+    unsigned long long ppos = this->Position();
+    retval = this->SeekOverCut(offset, whence);
+    while (retval >= 0 && m_Cut != NULL && this->Position() >= m_Cut->start)
+    {
+      if (this->Position() < ppos) {
+        // On skip back, seek over:
+        //   if ((offset = (long long)(this->Position() + m_Cut->start - m_Cut->end)) < 0)
+        //     offset = 0;
+        //   XBMC->Log(LOG_DEBUG,"%s - Seek <<< cut: %lld", __FUNCTION__, offset);
+        // On skip back, ignore cut:
+        XBMC->Log(LOG_DEBUG,"%s - Seek back! Ignore cut: %llu - %llu", __FUNCTION__, m_Cut->start, m_Cut->end);
+        m_Cut->isIgnored = true;
+        this->FindPinCutAround(true);
+        break;
+      }
+      else
+      {
+        if ((offset = (long long)(this->Position() + m_Cut->end - m_Cut->start)) > (long long)this->Length())
+          offset = (long long)this->Length();
+        XBMC->Log(LOG_DEBUG,"%s - Seek >>> cut: %lld", __FUNCTION__, offset);
+      }
+      retval = this->SeekOverCut(offset, WHENCE_SET);
+    }
+  }
+  else
+    retval = cmyth_file_seek(*m_file_t, offset, whence);
   return retval;
 }
 
@@ -73,5 +119,57 @@ unsigned long long MythFile::Position()
 {
   unsigned long long retval = 0;
   retval = cmyth_file_position(*m_file_t);
+  return retval;
+}
+
+void MythFile::ResetCutList()
+{
+  m_CutListSize = 0;
+  m_Cut = NULL;
+}
+
+bool MythFile::AddCutEntry(unsigned long long start, unsigned long long end)
+{
+  if (m_CutListSize < FILE_CUT_LIST_SIZE)
+  {
+    m_CutList[m_CutListSize].start = start;
+    m_CutList[m_CutListSize].end = end;
+    m_CutList[m_CutListSize].isIgnored = false;
+    PinCutAround(&m_CutList[m_CutListSize], false);
+    m_CutListSize++;
+    return true;
+  }
+  else
+    return false;
+}
+
+void MythFile::PinCutAround(FILE_CUT_ENTRY *cutEntry, bool preserveIgnored)
+{
+  if (!cutEntry->isIgnored)
+  {
+    if (cutEntry->end > this->Position() && (m_Cut == NULL || cutEntry->start < m_Cut->start))
+    {
+      m_Cut = cutEntry;
+    }
+  }
+  else
+  {
+    // Ignore Cut until next skip only ?
+    cutEntry->isIgnored = preserveIgnored;
+  }
+}
+
+void MythFile::FindPinCutAround(bool preserveIgnored)
+{
+  m_Cut = NULL;
+  for (int i = 0; i < m_CutListSize; i++)
+    PinCutAround(&m_CutList[i], preserveIgnored);
+}
+
+long long MythFile::SeekOverCut(long long offset, int whence)
+{
+  long long retval = 0;
+  retval = cmyth_file_seek(*m_file_t, offset, whence);
+  this->FindPinCutAround(false);
   return retval;
 }

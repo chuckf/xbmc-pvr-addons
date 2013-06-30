@@ -42,6 +42,8 @@ extern "C" {
 #define RCV_BUF_DATA_SIZE                  64     // Buffer size to parse backend response from data control connection
 #define RCV_BUF_IMAGE_SIZE                 32000  // Buffer size to download artworks
 
+#define FILE_CUT_LIST_SIZE                 32
+
 #define LIVETV_CONFLICT_STRATEGY_HASLATER  0
 #define LIVETV_CONFLICT_STRATEGY_STOPTV    1
 #define LIVETV_CONFLICT_STRATEGY_CANCELREC 2
@@ -57,6 +59,7 @@ extern "C" {
 #define DEFAULT_DB_NAME                    "mythconverg"
 #define DEFAULT_DB_PORT                    3306
 #define DEFAULT_RECORD_TEMPLATE            1
+#define DEFAULT_EDL_METHOD                 0
 
 #define SUBTITLE_SEPARATOR " - "
 
@@ -98,6 +101,8 @@ extern bool         g_bRecAutoRunJob3;
 extern bool         g_bRecAutoRunJob4;
 extern bool         g_bRecAutoExpire;
 extern int          g_iRecTranscoder;
+///* EDL settings */
+extern int          g_iEdlMethodType;           ///< Method type to process Edit Decision List (0=PVR, 1=Internal)
 
 extern ADDON::CHelper_libXBMC_addon *XBMC;
 extern CHelper_libXBMC_pvr   *PVR;

@@ -52,6 +52,7 @@ bool         g_bRecAutoRunJob3         = false;
 bool         g_bRecAutoRunJob4         = false;
 bool         g_bRecAutoExpire          = false;
 int          g_iRecTranscoder          = 0;
+int          g_iEdlMethodType          = DEFAULT_EDL_METHOD;               ///< Method type to process Edit Decision List (0=PVR, 1=Internal)
 
 ///* Client member variables */
 ADDON_STATUS m_CurStatus              = ADDON_STATUS_UNKNOWN;
@@ -251,6 +252,14 @@ ADDON_STATUS ADDON_Create(void *hdl, void *props)
       g_bRecAutoExpire = false;
     if (!XBMC->GetSetting("rec_transcoder", &g_iRecTranscoder))
       g_iRecTranscoder = 0;
+  }
+
+  /* Read settings "EDL method" from settings.xml */
+  if (!XBMC->GetSetting("edl_method_provider", &g_iEdlMethodType))
+  {
+    /* If setting is unknown fallback to defaults */
+    XBMC->Log(LOG_ERROR, "Couldn't get 'edl_method_provider' setting, falling back to '%i' as default", DEFAULT_EDL_METHOD);
+    g_iEdlMethodType = DEFAULT_EDL_METHOD;
   }
 
   free (buffer);
