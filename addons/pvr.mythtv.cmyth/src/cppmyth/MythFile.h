@@ -60,7 +60,8 @@ private:
   FILE_CUT_ENTRY m_CutList[FILE_CUT_LIST_SIZE];
   int m_CutListSize;
   FILE_CUT_ENTRY *m_Cut; // The handled cut for current position
-  void PinCutAround(FILE_CUT_ENTRY *cutEntry, bool preserveIgnored);
-  void FindPinCutAround(bool preserveIgnored);
+  FILE_CUT_ENTRY *m_IgnoredCut; // The cut to ignore
+  void PinCutAround(FILE_CUT_ENTRY *cutEntry);
+  void FindPinCutAround();
   long long SeekOverCut(long long offset, int whence);
 };

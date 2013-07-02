@@ -88,7 +88,7 @@ long long MythFile::Seek(long long offset, int whence)
   {
     unsigned long long ppos = this->Position();
     retval = this->SeekOverCut(offset, whence);
-    while (retval >= 0 && m_Cut != NULL && this->Position() >= m_Cut->start)
+    while (retval >= 0 && m_Cut != NULL && this->Position() > m_Cut->start)
     {
       if (this->Position() < ppos) {
         // On skip back, seek over:
@@ -98,7 +98,8 @@ long long MythFile::Seek(long long offset, int whence)
         // On skip back, ignore cut:
         XBMC->Log(LOG_DEBUG,"%s - Seek back! Ignore cut: %llu - %llu", __FUNCTION__, m_Cut->start, m_Cut->end);
         m_Cut->isIgnored = true;
-        this->FindPinCutAround(true);
+        m_IgnoredCut = m_Cut;
+        this->FindPinCutAround();
         break;
       }
       else
@@ -126,6 +127,7 @@ void MythFile::ResetCutList()
 {
   m_CutListSize = 0;
   m_Cut = NULL;
+  m_IgnoredCut = NULL;
 }
 
 bool MythFile::AddCutEntry(unsigned long long start, unsigned long long end)
@@ -135,7 +137,7 @@ bool MythFile::AddCutEntry(unsigned long long start, unsigned long long end)
     m_CutList[m_CutListSize].start = start;
     m_CutList[m_CutListSize].end = end;
     m_CutList[m_CutListSize].isIgnored = false;
-    PinCutAround(&m_CutList[m_CutListSize], false);
+    PinCutAround(&m_CutList[m_CutListSize]);
     m_CutListSize++;
     return true;
   }
@@ -143,7 +145,7 @@ bool MythFile::AddCutEntry(unsigned long long start, unsigned long long end)
     return false;
 }
 
-void MythFile::PinCutAround(FILE_CUT_ENTRY *cutEntry, bool preserveIgnored)
+void MythFile::PinCutAround(FILE_CUT_ENTRY *cutEntry)
 {
   if (!cutEntry->isIgnored)
   {
@@ -152,24 +154,30 @@ void MythFile::PinCutAround(FILE_CUT_ENTRY *cutEntry, bool preserveIgnored)
       m_Cut = cutEntry;
     }
   }
-  else
-  {
-    // Ignore Cut until next skip only ?
-    cutEntry->isIgnored = preserveIgnored;
-  }
 }
 
-void MythFile::FindPinCutAround(bool preserveIgnored)
+void MythFile::FindPinCutAround()
 {
   m_Cut = NULL;
   for (int i = 0; i < m_CutListSize; i++)
-    PinCutAround(&m_CutList[i], preserveIgnored);
+    PinCutAround(&m_CutList[i]);
 }
 
 long long MythFile::SeekOverCut(long long offset, int whence)
 {
   long long retval = 0;
-  retval = cmyth_file_seek(*m_file_t, offset, whence);
-  this->FindPinCutAround(false);
+  unsigned long long pos;
+  if ((retval = cmyth_file_seek(*m_file_t, offset, whence)) >= 0)
+  {
+    pos = (unsigned long long)retval;
+    if (m_IgnoredCut != NULL)
+    {
+      if (pos < m_IgnoredCut->start || pos >= m_IgnoredCut->end)
+        m_IgnoredCut->isIgnored = false;
+      else
+        m_IgnoredCut->isIgnored = true;
+    }
+    this->FindPinCutAround();
+  }
   return retval;
 }
