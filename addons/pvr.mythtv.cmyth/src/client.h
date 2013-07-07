@@ -63,6 +63,8 @@ extern "C" {
 
 #define SUBTITLE_SEPARATOR " - "
 
+#define MENUHOOK_SWITCH_ON_OFF_EDL         2
+
 /*!
  * @brief PVR macros for string exchange
  */
@@ -103,6 +105,7 @@ extern bool         g_bRecAutoExpire;
 extern int          g_iRecTranscoder;
 ///* EDL settings */
 extern int          g_iEdlMethodType;           ///< Method type to process Edit Decision List (0=PVR, 1=Internal)
+extern bool         g_bEdlEnabled;
 
 extern ADDON::CHelper_libXBMC_addon *XBMC;
 extern CHelper_libXBMC_pvr   *PVR;

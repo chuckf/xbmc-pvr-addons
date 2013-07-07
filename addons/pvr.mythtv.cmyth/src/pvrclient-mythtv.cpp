@@ -1603,7 +1603,7 @@ bool PVRClientMythTV::OpenRecordedStream(const PVR_RECORDING &recording)
       m_pEventHandler->DisablePlayback();
     }
     // If internal method is selected to process EDL then initialize the cut list.
-    else if (g_iEdlMethodType == 1)
+    else if (g_bEdlEnabled && g_iEdlMethodType == 1)
       LoadCutList(m_file,it->second);
 
     if (g_bExtraDebug)
@@ -1729,7 +1729,16 @@ long long PVRClientMythTV::LengthRecordedStream()
 
 PVR_ERROR PVRClientMythTV::CallMenuHook(const PVR_MENUHOOK &menuhook)
 {
-  (void)menuhook;
+  if (menuhook.iHookId == MENUHOOK_SWITCH_ON_OFF_EDL)
+  {
+      g_bEdlEnabled = (g_bEdlEnabled ? false : true);
+      if (g_bEdlEnabled)
+        XBMC->QueueNotification(QUEUE_INFO, XBMC->GetLocalizedString(30413));
+      else
+        XBMC->QueueNotification(QUEUE_INFO, XBMC->GetLocalizedString(30414));
+      return PVR_ERROR_NO_ERROR;
+  }
+
   return PVR_ERROR_NOT_IMPLEMENTED;
 }
 

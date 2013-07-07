@@ -179,3 +179,15 @@ msgstr ""
 msgctxt "#30308"
 msgid "Stopping Live TV due to conflicting recording: %s"
 msgstr ""
+
+msgctxt "#30412"
+msgid "Enable/Disable EDL processing"
+msgstr ""
+
+msgctxt "#30413"
+msgid "EDL processing is ENABLED"
+msgstr ""
+
+msgctxt "#30414"
+msgid "EDL processing is DISABLED"
+msgstr ""
