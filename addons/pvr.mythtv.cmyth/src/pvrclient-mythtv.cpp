@@ -1654,12 +1654,17 @@ void PVRClientMythTV::LoadCutList(MythFile &file, MythProgramInfo &recording)
           default:
             endOffset = (unsigned long long)nsoffset; // Choose to end on next frame
         }
-        if (!file.AddCutEntry(startOffset, endOffset))
+        if (endOffset > startOffset)
         {
-          XBMC->Log(LOG_ERROR, "%s - Maximum number of EDL entries reached for: %s", __FUNCTION__, recording.Title().c_str());
-          break;
+          if (!file.AddCutEntry(startOffset, endOffset))
+          {
+            XBMC->Log(LOG_ERROR, "%s - Maximum number of EDL entries reached for: %s", __FUNCTION__, recording.Title().c_str());
+            break;
+          }
+          XBMC->Log(LOG_DEBUG, "%s - Add cut entry to file: %llu - %llu", __FUNCTION__, startOffset, endOffset);
         }
-        XBMC->Log(LOG_DEBUG, "%s - Add cut entry to file: %llu - %llu", __FUNCTION__, startOffset, endOffset);
+        else
+          XBMC->Log(LOG_NOTICE, "%s - Reject cut entry: %llu - %llu", __FUNCTION__, startOffset, endOffset);
       }
     }
   }
