@@ -1,24 +1,25 @@
-if ADDON_MYTHTV
-          ADDON_MYTHTV_SUBDIRS = pvr.mythtv.cmyth
-endif
 if ADDON_IPTVSIMPLE
           ADDON_IPTVSIMPLE_SUBDIRS = pvr.iptvsimple
 endif
+if ADDON_MYTHTV
+          ADDON_MYTHTV_SUBDIRS = pvr.mythtv.cmyth
+endif
 
-SUBDIRS = pvr.demo \
+### Keep this in alphabetical order
+SUBDIRS = pvr.argustv \
+          pvr.demo \
+          pvr.dvblink \
           pvr.dvbviewer \
           pvr.hts \
           pvr.mediaportal.tvserver \
-          pvr.nextpvr \
-          pvr.vdr.vnsi \
-          pvr.njoy \
-          pvr.vuplus \
-          pvr.argustv \
-          pvr.dvblink \
-          pvr.wmc \
           pvr.mythtv \
-          $(ADDON_MYTHTV_SUBDIRS) \
-          $(ADDON_IPTVSIMPLE_SUBDIRS)
+          pvr.nextpvr \
+          pvr.njoy \
+          pvr.vdr.vnsi \
+          pvr.vuplus \
+          pvr.wmc \
+          $(ADDON_IPTVSIMPLE_SUBDIRS) \
+          $(ADDON_MYTHTV_SUBDIRS)
 
 clean:
 	-rm -f *.zip
