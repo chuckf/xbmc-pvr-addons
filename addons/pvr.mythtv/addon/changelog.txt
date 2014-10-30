@@ -1,3 +1,18 @@
+Backported from KODI release
+- Handle GUI events to activate/deactivate power saving mode
+- Don't send WOL when power saving mode is activated
+- Don't block shutdown when power saving mode is activated
+- Handle hang: Always retry protocol connection after hang
+- Handle hang: Reconnect event handler after hanging of control connection
+- Block backend shutdown by default: New setting
+- Fix refreshing recordings and schedules on wake up
+- Handles version of services
+- Allow HTTP redirection to get slave previews
+- New format for program UID string
+- demuxer: optimizing, fix PES header
+- Fix category override
+- Transfer sub channel number
+
 v1.9.22
 - Fix identifier for DVB-SUBTITLE
 - Add setting to enable or disable EDL functionnality
