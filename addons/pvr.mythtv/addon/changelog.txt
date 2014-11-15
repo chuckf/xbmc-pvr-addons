@@ -1,4 +1,5 @@
 Backported from KODI release
+- Fix for OSX, IOS runtimes
 - Handle GUI events to activate/deactivate power saving mode
 - Don't send WOL when power saving mode is activated
 - Don't block shutdown when power saving mode is activated
