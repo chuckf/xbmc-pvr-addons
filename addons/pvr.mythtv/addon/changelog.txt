@@ -1,4 +1,6 @@
-Backported from KODI release
+v1.9.22-26 (Backported from KODI release)
+- Adding WS API Security Pin parameter
+- Adding episode info (subtitle) to EPG title
 - Fix for OSX, IOS runtimes
 - Handle GUI events to activate/deactivate power saving mode
 - Don't send WOL when power saving mode is activated
