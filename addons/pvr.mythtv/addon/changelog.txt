@@ -1,4 +1,6 @@
-v1.9.22-26 (Backported from KODI release)
+v1.9.22-28 (Backported from KODI release)
+- Clean FileOps cache by max age
+- CPPMyth 1.1
 - Adding WS API Security Pin parameter
 - Adding episode info (subtitle) to EPG title
 - Fix for OSX, IOS runtimes
