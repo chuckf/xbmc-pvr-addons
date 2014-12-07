@@ -1,6 +1,3 @@
-v1.9.29-pre
-- Improves loading of channels and recordings
-
 v1.9.28
 - jansson 2.7: fix compilation on ios8/arm64
 - Cleaned cache by max age
