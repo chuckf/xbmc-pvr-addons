@@ -1,4 +1,5 @@
 v1.9.22-28 (Backported from KODI release)
+- Improves loading of resources
 - Clean FileOps cache by max age
 - CPPMyth 1.1
 - Adding WS API Security Pin parameter
