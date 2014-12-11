@@ -1,4 +1,7 @@
-v1.9.22-32 (Backported from KODI release)
+v1.9.22-33 (Backported from KODI release)
+- Handles MasterBackendOverride (kaptain-iglu)
+- Minor changes to conform with C++11
+- Updated language files from Transifex
 - New method to handle read ahead (live playback)
 - Options to disable channel icons and recordings or fanart images
 - Improves loading of resources
