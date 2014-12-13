@@ -1,3 +1,9 @@
+[B]Version 1.9.11[/B]
+Updated: Fixed crash when switching channels with enabled timeshifting
+
+[B]Version 1.9.10[/B]
+Updated: language files from Transifex
+
 [B]Version 1.9.9[/B]
 Updated: change library name to Kodi
 
