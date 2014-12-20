@@ -1,4 +1,5 @@
-v1.9.22-28 (Backported from KODI release)
+v1.9.22-29 (Backported from KODI release)
+- Options to disable channel icons and recordings or fanart images
 - Improves loading of resources
 - Clean FileOps cache by max age
 - CPPMyth 1.1
