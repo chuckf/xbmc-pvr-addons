@@ -1,5 +1,5 @@
-v1.9.22-30 (Backported from KODI release)
-- No waiting on read ahead (live playback)
+v1.9.22-31 (Backported from KODI release)
+- New method to handle read ahead (live playback)
 - Options to disable channel icons and recordings or fanart images
 - Improves loading of resources
 - Clean FileOps cache by max age
