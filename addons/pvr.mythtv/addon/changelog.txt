@@ -1,4 +1,7 @@
+v1.12.0
+- Support protocol 0.28-pre:84
 - Handles MasterBackendOverride (kaptain-iglu)
+- New setting menu hook to refresh channel icons
 
 v1.11.4
 - Updated language files from Transifex
