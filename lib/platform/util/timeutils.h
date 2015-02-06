@@ -35,8 +35,8 @@
 #include "../os.h"
 
 #if defined(__APPLE__)
+#include <sys/time.h>
 #include <mach/mach_time.h>
-#include <CoreVideo/CVHostTime.h>
 #elif defined(__WINDOWS__)
 #include <time.h>
 #else
@@ -79,7 +79,15 @@ namespace PLATFORM
   inline int64_t GetTimeMs()
   {
   #if defined(__APPLE__)
-    return (int64_t) (CVGetCurrentHostTime() / (int64_t)(CVGetHostClockFrequency() * 0.001));
+    // Recommended by Apple's QA1398.
+    int64_t ticks = 0;
+    static mach_timebase_info_data_t timebase;
+    // Get the timebase if this is the first time we run.
+    if (timebase.denom == 0)
+      (void)mach_timebase_info(&timebase);
+    // Use timebase to convert absolute time tick units into nanoseconds.
+    ticks = mach_absolute_time() * timebase.numer / timebase.denom;
+    return ticks / 1000000;
   #elif defined(__WINDOWS__)
     LARGE_INTEGER tickPerSecond;
     LARGE_INTEGER tick;
