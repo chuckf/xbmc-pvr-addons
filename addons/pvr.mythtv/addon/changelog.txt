@@ -1,4 +1,5 @@
-v1.9.22-34 (Backported from KODI release)
+v1.9.22-35 (Backported from KODI release)
+- Support protocol 0.28-pre:85
 - Support protocol 0.28-pre:84
 - Handles MasterBackendOverride (kaptain-iglu)
 - New setting menu hook to refresh channel icons
