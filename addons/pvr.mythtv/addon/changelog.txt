@@ -1,3 +1,6 @@
+v1.12.2
+- New JSON parser (sajson)
+
 v1.12.1
 - Support protocol 0.28-pre:85
 
