@@ -1,4 +1,5 @@
-v1.9.22-36 (Backported from KODI release)
+v1.9.22-37 (Backported from KODI release)
+- Support for RPi2: ARMV6 , ARMV7 Atomic primitives
 - New JSON parser (sajson)
 - Support protocol 0.28-pre:85
 - Support protocol 0.28-pre:84
