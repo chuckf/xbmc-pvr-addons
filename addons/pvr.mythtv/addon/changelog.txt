@@ -1,3 +1,6 @@
+v1.12.3
+- Support for RPi2: ARMV6 , ARMV7 Atomic primitives
+
 v1.12.2
 - New JSON parser (sajson)
 
