@@ -2,6 +2,9 @@
 - Support protocol 0.28-pre:84
 - Handles MasterBackendOverride (kaptain-iglu)
 
+v1.11.5
+- Updated language files from Transifex
+
 v1.11.4
 - Updated language files from Transifex
 - Minor changes to conform with C++11
