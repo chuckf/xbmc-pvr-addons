@@ -129,8 +129,6 @@ namespace PLATFORM
         bReturn = true;
       }
 
-      if (bReturn)
-        ThreadsWait(m_thread, NULL);
       return bReturn;
     }
 
