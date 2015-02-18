@@ -1,3 +1,6 @@
+v1.12.5
+- Fix ARMV6, ARMV7
+
 v1.12.4
 - Support for RPi2: ARMV6 , ARMV7 Atomic primitives
 - Fix minor bugs
