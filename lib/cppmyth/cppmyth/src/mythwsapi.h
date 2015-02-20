@@ -28,13 +28,13 @@
 #define MYTH_API_VERSION_MIN_RANKING 0x00020000
 #define MYTH_API_VERSION_MAX_RANKING 0x0005FFFF
 
-namespace PLATFORM
-{
-  class CMutex;
-}
-
 namespace Myth
 {
+
+  namespace PLATFORM
+  {
+    class CMutex;
+  }
 
   typedef enum
   {
